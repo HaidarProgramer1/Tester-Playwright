@@ -100,13 +100,13 @@ async function Pembayaran (page:Page, pembayaran) {
     await page.getByRole('checkbox', { name: 'Kirim struk' }).check();
     
     // Verify the initial phone number
-    await page.getByRole('textbox', { name: '8316352725' }).fill(pembayaran.nomortelepon);    
+    await page.getByRole('textbox', { name: 'Contoh: budi93@gmail.com' }).fill(pembayaran.emailstruk);    
     
     const page6Promise = page.waitForEvent('popup');
     await page.getByRole('button', { name: 'Bayar' }).click();
     const page6 = await page6Promise;
 
-    // await expect(page.getByLabel('Transaksi berhasil!')).toBeVisible();
+    await expect(page.getByLabel('Transaksi berhasil!')).toBeVisible();
     
 }
 
@@ -161,9 +161,9 @@ test('Tambah Paket', async ({page}) => {
     await Tambahpaket (page, tambahpaket);
 });
 
-test ('Pembayaran', async ({page}) => {
+test ('Pembayaran - kirim email', async ({page}) => {
     const pembayaran = {
-        nomortelepon : '8316352725',
+        emailstruck : 'email@gmail.com',
     }
     const login = {
         email : 'dogeheaven2@gmail.com',
