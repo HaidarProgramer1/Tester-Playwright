@@ -30,7 +30,6 @@ async function Tambahproduk(page : Page, tambahproduk : any,){
     // Step 4: Save the new item
     await page.getByRole('button', { name: 'Simpan' }).click();
 
-    // Verify the item is added successfully (add appropriate validation)
     const successMessage = page.locator('.swal2-success-ring');
     await expect(successMessage).toBeVisible();
 }
@@ -44,22 +43,27 @@ async function Tambahpaket(page : Page, tambahpaket : any) {
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Lanjutkan' }).click();
 
-    // Isi jumlah item untuk setiap produk
     for (let i = 0; i <= 10; i++) {
-
-        const isFilled = await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).getAttribute('value') !== '1';
-
-        if(isFilled) {
-            console.log('Penuh bang');
-            break;        
+        // Cek apakah elemen input ada
+        const elementExists = await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).count();
+        
+        if (elementExists === 0) {
+            // Jika elemen tidak ditemukan, hentikan loop
+            break;
         }
-        else {
-
-        await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).click();
-        await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).fill(tambahpaket.jumlahitem, { timeout: 100000 });
+    
+        // Cek apakah elemen sudah terisi
+        const isFilled = await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).getAttribute('value') !== '1';
+    
+        if (isFilled) {
+            continue; // Lewati iterasi ini jika field sudah terisi
+        } else {
+            // Isi field jika belum terisi
+            await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).click();
+            await page.locator(`input[name="item\\.${i}\\.jumlahItem"]`).fill(tambahpaket.jumlahitem);
         }
     }
-
+    
     // Isi nama paket
     await page.getByLabel('Nama Paket',{ exact: true }).click();
     await page.getByLabel('Nama Paket', { exact: true }).fill(tambahpaket.namapaket);
@@ -123,11 +127,11 @@ test('Tambah Produk', async ({page}) => {
     
     email : 'dogeheaven2@gmail.com',
     password : 'rahasia123',
-    namabarang : 'Hedera',
+    namabarang : 'Neiro',
     sku : '',
     harga : '9000',
-    keterangan : 'Hedera',
-    deskripsi : 'Hedera',
+    keterangan : 'Neiro',
+    deskripsi : 'Neiro',
     jumlahstok : '1000',
     };
 
@@ -145,7 +149,7 @@ test('Tambah Paket', async ({page}) => {
     const tambahpaket = {
 
         jumlahitem : '1000',
-        namapaket : 'Nama paket Hemat',
+        namapaket : 'Nama paket Natal',
         hargapaket : '5000',
         keteranganpaket : 'keterangan',
         deskripsipaket : 'Deskripsi paket',
