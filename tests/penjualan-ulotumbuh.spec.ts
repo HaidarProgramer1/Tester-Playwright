@@ -112,6 +112,29 @@ async function Pembayaran (page:Page, pembayaran) {
     
 }
 
+async function Pembayaranwhatsapp (page:Page, pembayaranwa : any ) {
+    
+    await expect(page).toHaveURL(`${process.env.TEST_URL}/transaksi`); 
+    await page.locator('.MuiPaper-root > div > .MuiButton-root').first().click();
+    await page.locator('div:nth-child(2) > div > .MuiButton-root').first().click();
+    await page.locator('div:nth-child(3) > div > .MuiButton-root').click();
+    await page.getByText('Bayar').click();
+
+    await page.getByRole('button', { name: 'Uang Pas' }).click();
+    await page.getByRole('button', { name: 'Bayar' }).click();
+    await page.getByRole('checkbox', { name: 'Kirim struk' }).check();
+    
+    // Verify the initial phone number
+    await page.getByRole('textbox', { name: '8316352725' }).click();
+    await page.getByRole('textbox', { name: '8316352725' }).fill(pembayaranwa.notelepon);
+     
+    await page.getByRole('button', { name: 'Bayar' }).click()
+    await expect(page.getByLabel('Transaksi berhasil!')).toBeVisible();
+
+}
+
+
+
 test('Login  ULO -Tumbuh', async ({page}) => {
     
     const login = {
@@ -173,5 +196,21 @@ test ('Pembayaran - kirim email', async ({page}) => {
     }
     await Login (page, login);
     await Pembayaran(page, pembayaran)
+
+});
+
+test ('Pembayaran - kirim Whatsapp', async ({page}) => {
+    const pembayaranwa = {
+        notelepon : '085173154578',
+    }
+
+    const login = {
+        email : 'dogeheaven2@gmail.com',
+        password : 'rahasia123',
+    }
+    
+  
+    await Login (page, login);
+    await Pembayaranwhatsapp (page, pembayaranwa)
 
 });
